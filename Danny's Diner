@@ -34,7 +34,7 @@ WHERE
   )
 
 
-For further analysis, I joimed all three tables to create one table. A left join was used as all records from my base table(sales) was to be retained.
+For further analysis, I joined all three tables to create one table. A left join was used as all records from my base table(sales) was to be retained.
 DROP TABLE IF EXISTS dds_complete_dataset;
 CREATE TEMP TABLE dds_complete_dataset AS
 SELECT
