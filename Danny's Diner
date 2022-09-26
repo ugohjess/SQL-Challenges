@@ -1,1 +1,286 @@
+Data Exploration: Danny Diner's dataset consists of three tables namely members, sales and menu.The dataset was reviewed to ensure accuracy, consistency and uniqueness.
+To further understand the tables,I performed joins to identify the realtionships between tables.
 
+I used an anti join to identify the count of foreign keys between the sales-member tables and found an overlapping value of
+1 implying that not all customer_id in the sales table appear in the members table.
+SELECT
+  COUNT(DISTINCT customer_id)
+FROM
+  dannys_diner.sales
+WHERE
+  NOT EXISTS(
+    SELECT
+      customer_id
+    from
+      dannys_diner.members
+    WHERE
+      sales.customer_id = members.customer_id
+  )
+  
+
+I repeated the same process for sales-menu tables and found no overlapping values implying that all products in the menu table appear in the sales table.
+SELECT
+  COUNT(DISTINCT product_id)
+FROM
+  dannys_diner.sales
+WHERE
+  NOT EXISTS(
+    SELECT
+      product_id
+    from
+      dannys_diner.menu
+    WHERE
+      sales.product_id = menu.product_id
+  )
+
+
+For further analysis, I joimed all three tables to create one table. A left join was used as all records from my base table(sales) was to be retained.
+DROP TABLE IF EXISTS dds_complete_dataset;
+CREATE TEMP TABLE dds_complete_dataset AS
+SELECT
+sales.customer_id,
+members.join_date,
+sales.order_date,
+menu.product_id,
+menu.product_name,
+menu.price 
+FROM dannys_diner.menu
+INNER JOIN dannys_diner.sales ON menu.product_id = sales.product_id 
+LEFT JOIN  dannys_diner.members ON sales.customer_id = members.customer_id 
+
+SELECT * FROM dds_complete_dataset;
+
+
+QUESTIONS
+1.  What is the total amount each customer spent at the restaurant?
+SELECT
+  customer_id,
+  SUM(price) as total
+FROM
+  dds_complete_dataset
+GROUP BY
+  1
+ ORDER BY 
+  2;
+
+2. How many days has each customer visited the restaurant?
+SELECT
+  customer_id,
+  COUNT( DISTINCT order_date) AS day_count
+FROM
+  dds_complete_dataset
+GROUP BY
+  1
+ORDER BY
+  2 DESC;
+
+3. What was the first item from the menu purchased by each customer?
+--dds means dannys_diners
+WITH dds_ordered_date AS(
+  SELECT
+    customer_id,
+    product_name,
+    Order_date,
+    RANK() OVER(
+      PARTITION BY customer_id
+      ORDER BY
+        order_date
+    ) AS rank_number
+  FROM
+    dds_complete_dataset
+)
+SELECT
+  customer_id,
+  product_name
+FROM
+  dds_ordered_date
+WHERE
+  rank_number = 1;
+  
+4.  What is the most purchased item on the menu and how many times was it purchased by all customers?
+SELECT
+  product_name,
+  COUNT(*) as frequency
+FROM
+  dds_complete_dataset
+GROUP BY
+  product_name
+ORDER BY
+  frequency DESC
+LIMIT
+  1;
+
+5. Which item was the most popular for each customer?
+WITH dds_most_ordered_product AS(
+  SELECT
+    customer_id,
+    product_name,
+    COUNT(*) AS frequency,
+    RANK() OVER(
+      PARTITION BY customer_id
+      ORDER BY
+        COUNT(*) DESC
+    ) AS rank_number
+  FROM
+    dds_complete_dataset
+  GROUP BY
+    customer_id,
+    product_name
+)
+SELECT
+  customer_id,
+  product_name
+FROM
+  dds_most_ordered_product
+WHERE
+  rank_number = 1;
+  
+6.  Which item was purchased first by the customer after they became a member?
+
+WITH dds_first_ordered_product AS (
+  SELECT
+    customer_id,
+    product_name,
+    join_date,
+    order_date,
+    RANK() OVER(
+      PARTITION BY customer_id,
+      join_date
+      ORDER BY
+        order_date
+    ) as rank_number
+  FROM
+    dds_complete_dataset
+  WHERE
+    order_date >= join_date
+)
+SELECT
+  customer_id,
+  product_name,
+  order_date
+FROM
+  dds_first_ordered_product
+WHERE
+  rank_number = 1;
+  
+7.  Which item was purchased just before the customer became a member?
+
+WITH dds_first_ordered_product AS (
+  SELECT
+    customer_id,
+    product_name,
+    join_date,
+    order_date,
+    RANK() OVER(
+      PARTITION BY customer_id
+      ORDER BY
+        order_date
+    ) as rank_number
+  FROM
+    dds_complete_dataset
+  WHERE
+    order_date < join_date
+)
+SELECT
+  customer_id,
+  product_name
+FROM
+  dds_first_ordered_product
+WHERE
+  rank_number = 1;
+
+8.  What is the total items and amount spent for each member before they became a member?
+
+SELECT
+  customer_id,
+  SUM(price),
+  COUNT(DISTINCT product_name)
+FROM
+  dds_complete_dataset
+WHERE
+  order_date < join_date
+  GROUP BY
+  customer_id
+
+9.  If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
+
+SELECT
+  customer_id,
+  SUM(
+    CASE
+      WHEN product_name = 'sushi' THEN price * 20
+      ELSE price * 10
+    END
+  ) AS total_points
+FROM
+  dds_complete_dataset
+GROUP BY
+  customer_id
+  ORDER BY
+  total_points DESC;
+
+
+11. Recreate the following table output using the available data:
+customer_id	order_date 	product_name	price	member
+A						2021-01-01		curry				15			N
+A						2021-01-01		sushi				10			N
+A						2021-01-07		curry				15			Y
+A						2021-01-10		ramen				12			Y
+A						2021-01-11		ramen				12			Y
+A						2021-01-11		ramen				12			Y
+B						2021-01-01		curry				15			N
+B						2021-01-02		curry				15			N
+B						2021-01-04		sushi				10			N
+B						2021-01-11		sushi				10			Y
+B						2021-01-16		ramen				12			Y
+B						2021-02-01		ramen				12			Y
+C						2021-01-01		ramen				12			N
+C						2021-01-01		ramen				12			N
+C						2021-01-07		ramen				12			N
+
+SELECT
+  customer_id,
+  order_date,
+  product_name,
+  price,
+  CASE
+    WHEN order_date >= join_date THEN 'Y'
+    ELSE 'N'
+  END AS member
+FROM
+  dds_complete_dataset
+ORDER BY
+  customer_id,
+  order_date;
+  
+12.  Danny also requires further information about the  ranking of customer products, but he purposely does not need the ranking for non-member purchases so 
+he expects null  ranking  values for the records when customers are not yet part of the loyalty program.
+
+WITH dds_derived_insights AS(
+  SELECT
+    customer_id,
+    order_date,
+    product_name,
+    price,
+    CASE
+      WHEN order_date >= join_date THEN 'Y'
+      ELSE 'N'
+    END AS member
+  FROM
+    dds_complete_dataset
+  ORDER BY
+    customer_id,
+    order_date
+)
+SELECT
+  dds_derived_insights.*,
+  CASE
+    WHEN member = 'Y' THEN RANK() OVER(
+      PARTITION BY customer_id
+      ORDER BY
+        order_date
+    )
+    ELSE NULL
+  END AS ranking
+FROM
+  dds_derived_insights
