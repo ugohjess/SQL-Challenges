@@ -1,1 +1,244 @@
+This case study has four area of focus.
+*Pizza Metrics
+*Runner and Customer Experience
+*Ingredient Optimisation
+*Pricing and Ratings
 
+
+PRICE METRICS
+
+1. How many pizzas were ordered?
+SELECT
+COUNT(*)
+FROM
+pizza_runner.customer_orders;
+
+2. How many unique customer orders were made?
+SELECT
+COUNT(DISTINCT customer_id)
+FROM
+pizza_runner.customer_orders;
+
+3. How many of each type of pizza was delivered?
+SELECT
+pizza_name,
+COUNT(customer_orders.order_id) AS delivered_order_count
+FROM
+pizza_runner.customer_orders
+LEFT JOIN pizza_runner.runner_orders ON customer_orders.order_id = runner_orders.order_id
+LEFT JOIN pizza_runner.pizza_names ON pizza_names.pizza_id = customer_orders.pizza_id
+WHERE
+cancellation NOT IN (
+‘Restaurant Cancellation’,
+‘Customer Cancellation’
+)
+OR cancellation IS NULL
+GROUP BY
+pizza_name
+ORDER BY
+delivered_order_count DESC;
+
+4. How many successful orders were delivered by each runner?
+SELECT
+runner_id,
+COUNT(order_id) AS successful_orders
+FROM
+pizza_runner.runner_orders
+WHERE
+cancellation NOT IN (
+‘Restaurant Cancellation’,
+‘Customer Cancellation’
+) OR cancellation IS NULL
+GROUP BY
+runner_id
+ORDER BY
+successful_orders DESC;
+
+5. How many of each type of pizza was ordered?
+CREATE TEMP TABLE ordered_pizza_type AS
+SELECT
+customer_orders.customer_id,
+customer_orders.order_id,
+pizza_names.pizza_id,
+pizza_names.pizza_name
+FROM
+pizza_runner.customer_orders
+LEFT JOIN pizza_runner.pizza_names ON customer_orders.pizza_id = pizza_names.pizza_id
+SELECT
+pizza_name,
+COUNT(*) as type_count
+FROM
+ordered_pizza_type
+GROUP BY
+pizza_name;
+
+OR
+SELECT
+pizza_name,
+COUNT(*) as type_count
+FROM
+pizza_runner.customer_orders
+LEFT JOIN pizza_runner.pizza_names ON customer_orders.pizza_id = pizza_names.pizza_id
+GROUP BY
+pizza_name;
+
+6. How many Vegetarian and Meatlovers were ordered by each customer?
+–from the temporary table created above, we can query to get the count SELECT
+customer_id,
+pizza_name,
+COUNT(*) as type_count
+FROM
+ordered_pizza_type
+GROUP BY
+customer_id,
+pizza_name
+ORDER BY
+customer_id,
+pizza_name;
+OR
+
+– join tables and query together
+
+SELECT
+customer_id,
+pizza_name,
+COUNT(*) as type_count
+FROM
+pizza_runner.customer_orders
+LEFT JOIN pizza_runner.pizza_names ON customer_orders.pizza_id = pizza_names.pizza_id
+GROUP BY
+customer_id,
+pizza_name
+ORDER BY
+customer_id,
+pizza_name;
+
+7. What was the maximum number of pizzas delivered in a single order?
+WITH max_delivered_order AS(
+SELECT
+customer_id,
+COUNT(customer_orders.order_id) AS successful_orders
+FROM
+pizza_runner.customer_orders
+LEFT JOIN pizza_runner.runner_orders ON customer_orders.order_id = runner_orders.order_id
+WHERE
+cancellation NOT IN (
+‘Restaurant Cancellation’,
+‘Customer Cancellation’
+)
+OR cancellation IS NULL
+GROUP BY
+customer_id
+ORDER BY
+successful_orders DESC
+)
+SELECT
+MAX(successful_orders)
+FROM
+max_delivered_order;
+
+8. For each customer, how many delivered pizzas had at least 1 change and how many had no changes?
+
+WITH delivered_pizza AS (
+SELECT
+*
+FROM
+pizza_runner.customer_orders
+LEFT JOIN pizza_runner.runner_orders ON customer_orders.order_id = runner_orders.order_id
+WHERE
+cancellation NOT IN (
+‘Restaurant Cancellation’,
+‘Customer Cancellation’
+)
+OR cancellation IS NULL
+),
+updated_extras_and_exclusions AS(
+SELECT
+customer_id,
+CASE
+WHEN exclusions IN (‘null’, ‘’) THEN NULL
+ELSE exclusions
+END AS updated_exclusions,
+CASE
+WHEN extras IN (‘null’, ‘’) THEN NULL
+ELSE extras
+END AS updated_extras
+FROM
+delivered_pizza
+)
+SELECT
+customer_id,
+COUNT(
+CASE
+WHEN updated_exclusions IS NOT NULL
+OR updated_extras IS NOT NULL THEN 1
+ELSE 0
+END
+) AS at_least_1_change,
+COUNT(
+CASE
+WHEN updated_exclusions IS NULL
+AND updated_extras IS NULL THEN 1
+ELSE 0
+END
+) AS no_change
+FROM
+updated_extras_and_exclusions
+GROUP BY
+customer_id
+ORDER BY
+customer_id;
+
+9. How many pizzas were delivered that had both exclusions and extras?
+WITH delivered_pizza AS (
+SELECT *
+FROM
+pizza_runner.customer_orders
+LEFT JOIN pizza_runner.runner_orders ON customer_orders.order_id = runner_orders.order_id
+WHERE
+cancellation NOT IN (
+‘Restaurant Cancellation’,
+‘Customer Cancellation’
+)
+OR cancellation IS NULL
+),
+updated_extras_and_exclusions AS(
+SELECT
+customer_id,
+CASE
+WHEN exclusions IN (‘null’, ‘’) THEN NULL
+ELSE exclusions
+END AS updated_exclusions,
+CASE
+WHEN extras IN (‘null’, ‘’) THEN NULL
+ELSE extras
+END AS updated_extras
+FROM
+delivered_pizza
+)
+SELECT
+COUNT(*)
+FROM updated_extras_and_exclusions
+WHERE updated_exclusions IS NULL OR updated_extras IS NOT NULL;
+
+10. What was the total volume of pizzas ordered for each hour of the day?
+SELECT
+DATE_PART(‘hour’, order_time :: TIMESTAMP) as hour_of_the_day,
+COUNT(pizza_id) as pizza_count
+FROM
+pizza_runner.customer_orders
+GROUP BY
+hour_of_the_day
+ORDER BY
+hour_of_the_day;
+
+11. What was the volume of orders for each day of the week?
+SELECT
+TO_CHAR(order_time :: TIMESTAMP,‘DAY’) as weekday,
+COUNT(pizza_id) as pizza_count
+FROM
+pizza_runner.customer_orders
+GROUP BY
+weekday
+ORDER BY
+weekday;
