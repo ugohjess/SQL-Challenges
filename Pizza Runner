@@ -140,54 +140,52 @@ max_delivered_order;
 8. For each customer, how many delivered pizzas had at least 1 change and how many had no changes?
 
 WITH delivered_pizza AS (
-SELECT
-*
-FROM
-pizza_runner.customer_orders
-LEFT JOIN pizza_runner.runner_orders ON customer_orders.order_id = runner_orders.order_id
-WHERE
-cancellation NOT IN (
-‘Restaurant Cancellation’,
-‘Customer Cancellation’
-)
-OR cancellation IS NULL
+  SELECT
+    *
+  FROM
+    pizza_runner.customer_orders
+    LEFT JOIN pizza_runner.runner_orders ON customer_orders.order_id = runner_orders.order_id
+  WHERE
+    cancellation NOT IN (
+      'Restaurant Cancellation',
+      'Customer Cancellation'
+    )
+    OR cancellation IS NULL
 ),
 updated_extras_and_exclusions AS(
-SELECT
-customer_id,
-CASE
-WHEN exclusions IN (‘null’, ‘’) THEN NULL
-ELSE exclusions
-END AS updated_exclusions,
-CASE
-WHEN extras IN (‘null’, ‘’) THEN NULL
-ELSE extras
-END AS updated_extras
-FROM
-delivered_pizza
+  SELECT
+    customer_id,
+    CASE
+      WHEN exclusions IN ('null', '') THEN NULL
+      ELSE exclusions
+    END AS updated_exclusions,
+    CASE
+      WHEN extras IN ('null', '') THEN NULL
+      ELSE extras
+    END AS updated_extras
+  FROM
+    delivered_pizza
 )
 SELECT
-customer_id,
-COUNT(
-CASE
-WHEN updated_exclusions IS NOT NULL
-OR updated_extras IS NOT NULL THEN 1
-ELSE 0
-END
-) AS at_least_1_change,
-COUNT(
-CASE
-WHEN updated_exclusions IS NULL
-AND updated_extras IS NULL THEN 1
-ELSE 0
-END
-) AS no_change
+  customer_id,
+  SUM(
+    CASE
+      WHEN updated_exclusions IS NOT NULL
+      OR updated_extras IS NOT NULL THEN 1
+      ELSE 0
+    END
+  ) AS at_least_1_change,
+  SUM(
+    CASE
+      WHEN updated_exclusions IS NULL
+      AND updated_extras IS NULL THEN 1
+      ELSE 0
+    END
+  ) AS no_changes
 FROM
-updated_extras_and_exclusions
+  updated_extras_and_exclusions
 GROUP BY
-customer_id
-ORDER BY
-customer_id;
+  customer_id;
 
 9. How many pizzas were delivered that had both exclusions and extras?
 WITH delivered_pizza AS (
