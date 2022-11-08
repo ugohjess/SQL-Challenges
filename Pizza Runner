@@ -14,7 +14,7 @@ This case study has four area of focus.
 
 
 PRICE METRICS
- ```sql
+ ```SQL
  1. How many pizzas were ordered?
 SELECT
 COUNT(*)
@@ -399,4 +399,6 @@ SELECT
     FROM
       pizza_runner.runner_orders
     GROUP BY
-      runner_id;```
+      runner_id;
+      
+      ```
