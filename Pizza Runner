@@ -5,21 +5,14 @@ This case study has four area of focus.
 *Pricing and Ratings
 
 
-#### PRICE METRICS
-This case study has four area of focus.
-*Pizza Metrics  
-*Runner and Customer Experience 
-*Ingredient Optimisation 
-*Pricing and Ratings 
-
-
 PRICE METRICS
- ```SQL
+
+1. How many pizzas were ordered?
 SELECT
 COUNT(*)
 FROM
 pizza_runner.customer_orders;
-```
+
 
 
 2. How many unique customer orders were made?
@@ -81,7 +74,8 @@ FROM
   GROUP BY
     pizza_name;
 
-OR
+-OR-
+
 SELECT
   pizza_name,
   COUNT(*) as type_count
@@ -105,7 +99,7 @@ ORDER BY
   customer_id,
   pizza_name;
 
-OR
+- OR -
 
 -- join tables and query together
 
@@ -402,4 +396,3 @@ SELECT
     GROUP BY
       runner_id;
       
-      ```
