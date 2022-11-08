@@ -9,8 +9,11 @@ This case study has four area of focus.
 
 1. How many pizzas were ordered?
 
-<span style="color:red"> SELECT COUNT FROM</span>  pizza_runner.customer_orders;
-
+```
+SELECT
+COUNT(*)
+FROM
+pizza_runner.customer_orders;```
   
 SELECT
 COUNT(*)
