@@ -15,11 +15,12 @@ This case study has four area of focus.
 
 PRICE METRICS
  ```SQL
- 1. How many pizzas were ordered?
 SELECT
 COUNT(*)
 FROM
-pizza_runner.customer_orders;```
+pizza_runner.customer_orders;
+```
+
 
 2. How many unique customer orders were made?
 SELECT
