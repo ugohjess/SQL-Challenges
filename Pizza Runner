@@ -8,388 +8,413 @@ This case study has four area of focus.
 #### PRICE METRICS
 1. How many pizzas were ordered?
 
-``` sql
-SELECT
-COUNT(*)
-FROM
-pizza_runner.customer_orders;```
+<!DOCTYPE html>
+<html>
 
-2. How many unique customer orders were made?
-SELECT
-  COUNT(DISTINCT customer_id)
-FROM
-  pizza_runner.customer_orders;
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Codes</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
 
-3. How many of each type of pizza was delivered?
-SELECT
-  pizza_name,
-  COUNT(customer_orders.order_id) AS delivered_order_count
-FROM
-  pizza_runner.customer_orders
-  LEFT JOIN pizza_runner.runner_orders ON customer_orders.order_id = runner_orders.order_id
-  LEFT JOIN pizza_runner.pizza_names ON pizza_names.pizza_id = customer_orders.pizza_id
-WHERE
-  cancellation NOT IN (
-    'Restaurant Cancellation',
-    'Customer Cancellation'
-  )
-  OR cancellation IS NULL
-GROUP BY
+<body class="stackedit">
+  <div class="stackedit__html"><p>This case study has four area of focus.<br>
+*Pizza Metrics<br>
+*Runner and Customer Experience<br>
+*Ingredient Optimisation<br>
+*Pricing and Ratings</p>
+<p>PRICE METRICS</p>
+<ol>
+<li>How many pizzas were ordered?</li>
+</ol>
+<pre class=" language-sql"><code class="prism  language-sql"><span class="token keyword">SELECT</span>
+<span class="token function">COUNT</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span>
+<span class="token keyword">FROM</span>
+pizza_runner<span class="token punctuation">.</span>customer_orders<span class="token punctuation">;</span><span class="token punctuation">`</span><span class="token punctuation">`</span><span class="token punctuation">`</span>
+
+<span class="token number">2</span><span class="token punctuation">.</span> How many <span class="token keyword">unique</span> customer orders were made?
+<span class="token keyword">SELECT</span>
+  <span class="token function">COUNT</span><span class="token punctuation">(</span><span class="token keyword">DISTINCT</span> customer_id<span class="token punctuation">)</span>
+<span class="token keyword">FROM</span>
+  pizza_runner<span class="token punctuation">.</span>customer_orders<span class="token punctuation">;</span>
+
+<span class="token number">3</span><span class="token punctuation">.</span> How many <span class="token keyword">of</span> each <span class="token keyword">type</span> <span class="token keyword">of</span> pizza was delivered?
+<span class="token keyword">SELECT</span>
+  pizza_name<span class="token punctuation">,</span>
+  <span class="token function">COUNT</span><span class="token punctuation">(</span>customer_orders<span class="token punctuation">.</span>order_id<span class="token punctuation">)</span> <span class="token keyword">AS</span> delivered_order_count
+<span class="token keyword">FROM</span>
+  pizza_runner<span class="token punctuation">.</span>customer_orders
+  <span class="token keyword">LEFT</span> <span class="token keyword">JOIN</span> pizza_runner<span class="token punctuation">.</span>runner_orders <span class="token keyword">ON</span> customer_orders<span class="token punctuation">.</span>order_id <span class="token operator">=</span> runner_orders<span class="token punctuation">.</span>order_id
+  <span class="token keyword">LEFT</span> <span class="token keyword">JOIN</span> pizza_runner<span class="token punctuation">.</span>pizza_names <span class="token keyword">ON</span> pizza_names<span class="token punctuation">.</span>pizza_id <span class="token operator">=</span> customer_orders<span class="token punctuation">.</span>pizza_id
+<span class="token keyword">WHERE</span>
+  cancellation <span class="token operator">NOT</span> <span class="token operator">IN</span> <span class="token punctuation">(</span>
+    <span class="token string">'Restaurant Cancellation'</span><span class="token punctuation">,</span>
+    <span class="token string">'Customer Cancellation'</span>
+  <span class="token punctuation">)</span>
+  <span class="token operator">OR</span> cancellation <span class="token operator">IS</span> <span class="token boolean">NULL</span>
+<span class="token keyword">GROUP</span> <span class="token keyword">BY</span>
   pizza_name
-ORDER BY
-  delivered_order_count DESC;
+<span class="token keyword">ORDER</span> <span class="token keyword">BY</span>
+  delivered_order_count <span class="token keyword">DESC</span><span class="token punctuation">;</span>
 
-4.  How many successful orders were delivered by each runner?
-SELECT
-  runner_id,
-  COUNT(order_id) AS successful_orders
-FROM
-  pizza_runner.runner_orders
-WHERE
-  cancellation NOT IN (
-    'Restaurant Cancellation',
-    'Customer Cancellation'
-  ) OR cancellation IS NULL
-GROUP BY
+<span class="token number">4</span><span class="token punctuation">.</span>  How many successful orders were delivered <span class="token keyword">by</span> each runner?
+<span class="token keyword">SELECT</span>
+  runner_id<span class="token punctuation">,</span>
+  <span class="token function">COUNT</span><span class="token punctuation">(</span>order_id<span class="token punctuation">)</span> <span class="token keyword">AS</span> successful_orders
+<span class="token keyword">FROM</span>
+  pizza_runner<span class="token punctuation">.</span>runner_orders
+<span class="token keyword">WHERE</span>
+  cancellation <span class="token operator">NOT</span> <span class="token operator">IN</span> <span class="token punctuation">(</span>
+    <span class="token string">'Restaurant Cancellation'</span><span class="token punctuation">,</span>
+    <span class="token string">'Customer Cancellation'</span>
+  <span class="token punctuation">)</span> <span class="token operator">OR</span> cancellation <span class="token operator">IS</span> <span class="token boolean">NULL</span>
+<span class="token keyword">GROUP</span> <span class="token keyword">BY</span>
   runner_id
-ORDER BY
-  successful_orders DESC;
+<span class="token keyword">ORDER</span> <span class="token keyword">BY</span>
+  successful_orders <span class="token keyword">DESC</span><span class="token punctuation">;</span>
 
-5.  How many of each type of pizza was ordered?
-CREATE TEMP TABLE ordered_pizza_type AS
-SELECT
-  customer_orders.customer_id,
-  customer_orders.order_id,
-  pizza_names.pizza_id,
-  pizza_names.pizza_name
-FROM
-  pizza_runner.customer_orders
-  LEFT JOIN pizza_runner.pizza_names ON customer_orders.pizza_id = pizza_names.pizza_id 
-  SELECT
-    pizza_name,
-    COUNT(*) as type_count
-  FROM
+<span class="token number">5</span><span class="token punctuation">.</span>  How many <span class="token keyword">of</span> each <span class="token keyword">type</span> <span class="token keyword">of</span> pizza was ordered?
+<span class="token keyword">CREATE</span> <span class="token keyword">TEMP</span> <span class="token keyword">TABLE</span> ordered_pizza_type <span class="token keyword">AS</span>
+<span class="token keyword">SELECT</span>
+  customer_orders<span class="token punctuation">.</span>customer_id<span class="token punctuation">,</span>
+  customer_orders<span class="token punctuation">.</span>order_id<span class="token punctuation">,</span>
+  pizza_names<span class="token punctuation">.</span>pizza_id<span class="token punctuation">,</span>
+  pizza_names<span class="token punctuation">.</span>pizza_name
+<span class="token keyword">FROM</span>
+  pizza_runner<span class="token punctuation">.</span>customer_orders
+  <span class="token keyword">LEFT</span> <span class="token keyword">JOIN</span> pizza_runner<span class="token punctuation">.</span>pizza_names <span class="token keyword">ON</span> customer_orders<span class="token punctuation">.</span>pizza_id <span class="token operator">=</span> pizza_names<span class="token punctuation">.</span>pizza_id 
+  <span class="token keyword">SELECT</span>
+    pizza_name<span class="token punctuation">,</span>
+    <span class="token function">COUNT</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">as</span> type_count
+  <span class="token keyword">FROM</span>
     ordered_pizza_type
-  GROUP BY
-    pizza_name;
+  <span class="token keyword">GROUP</span> <span class="token keyword">BY</span>
+    pizza_name<span class="token punctuation">;</span>
 
-OR
-SELECT
-  pizza_name,
-  COUNT(*) as type_count
-FROM
-  pizza_runner.customer_orders
-  LEFT JOIN pizza_runner.pizza_names ON customer_orders.pizza_id = pizza_names.pizza_id
-GROUP BY
-  pizza_name;
+<span class="token operator">OR</span>
+<span class="token keyword">SELECT</span>
+  pizza_name<span class="token punctuation">,</span>
+  <span class="token function">COUNT</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">as</span> type_count
+<span class="token keyword">FROM</span>
+  pizza_runner<span class="token punctuation">.</span>customer_orders
+  <span class="token keyword">LEFT</span> <span class="token keyword">JOIN</span> pizza_runner<span class="token punctuation">.</span>pizza_names <span class="token keyword">ON</span> customer_orders<span class="token punctuation">.</span>pizza_id <span class="token operator">=</span> pizza_names<span class="token punctuation">.</span>pizza_id
+<span class="token keyword">GROUP</span> <span class="token keyword">BY</span>
+  pizza_name<span class="token punctuation">;</span>
   
-6.  How many Vegetarian and Meatlovers were ordered by each customer?  
---from the temporary table created above, we can query to get the count SELECT
-  customer_id,
-  pizza_name,
-  COUNT(*) as type_count
-FROM
+<span class="token number">6</span><span class="token punctuation">.</span>  How many Vegetarian <span class="token operator">and</span> Meatlovers were ordered <span class="token keyword">by</span> each customer?  
+<span class="token comment">--from the temporary table created above, we can query to get the count SELECT</span>
+  customer_id<span class="token punctuation">,</span>
+  pizza_name<span class="token punctuation">,</span>
+  <span class="token function">COUNT</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">as</span> type_count
+<span class="token keyword">FROM</span>
   ordered_pizza_type
-GROUP BY
-  customer_id,
+<span class="token keyword">GROUP</span> <span class="token keyword">BY</span>
+  customer_id<span class="token punctuation">,</span>
   pizza_name
-ORDER BY
-  customer_id,
-  pizza_name;
+<span class="token keyword">ORDER</span> <span class="token keyword">BY</span>
+  customer_id<span class="token punctuation">,</span>
+  pizza_name<span class="token punctuation">;</span>
 
-OR
+<span class="token operator">OR</span>
 
--- join tables and query together
+<span class="token comment">-- join tables and query together</span>
 
-SELECT
-  customer_id,
-  pizza_name,
-  COUNT(*) as type_count
-FROM
-  pizza_runner.customer_orders
-  LEFT JOIN pizza_runner.pizza_names ON customer_orders.pizza_id = pizza_names.pizza_id
-GROUP BY
-  customer_id,
+<span class="token keyword">SELECT</span>
+  customer_id<span class="token punctuation">,</span>
+  pizza_name<span class="token punctuation">,</span>
+  <span class="token function">COUNT</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">as</span> type_count
+<span class="token keyword">FROM</span>
+  pizza_runner<span class="token punctuation">.</span>customer_orders
+  <span class="token keyword">LEFT</span> <span class="token keyword">JOIN</span> pizza_runner<span class="token punctuation">.</span>pizza_names <span class="token keyword">ON</span> customer_orders<span class="token punctuation">.</span>pizza_id <span class="token operator">=</span> pizza_names<span class="token punctuation">.</span>pizza_id
+<span class="token keyword">GROUP</span> <span class="token keyword">BY</span>
+  customer_id<span class="token punctuation">,</span>
   pizza_name
-ORDER BY
-  customer_id,
-  pizza_name;
+<span class="token keyword">ORDER</span> <span class="token keyword">BY</span>
+  customer_id<span class="token punctuation">,</span>
+  pizza_name<span class="token punctuation">;</span>
   
-7. What was the maximum number of pizzas delivered in a single order?
-WITH max_delivered_order AS(
-  SELECT
-    customer_id,
-    COUNT(customer_orders.order_id) AS successful_orders
-  FROM
-    pizza_runner.customer_orders
-    LEFT JOIN pizza_runner.runner_orders ON customer_orders.order_id = runner_orders.order_id
-  WHERE
-    cancellation NOT IN (
-      'Restaurant Cancellation',
-      'Customer Cancellation'
-    )
-    OR cancellation IS NULL
-  GROUP BY
+<span class="token number">7</span><span class="token punctuation">.</span> What was the maximum number <span class="token keyword">of</span> pizzas delivered <span class="token operator">in</span> <span class="token number">a</span> single <span class="token keyword">order</span>?
+<span class="token keyword">WITH</span> max_delivered_order <span class="token keyword">AS</span><span class="token punctuation">(</span>
+  <span class="token keyword">SELECT</span>
+    customer_id<span class="token punctuation">,</span>
+    <span class="token function">COUNT</span><span class="token punctuation">(</span>customer_orders<span class="token punctuation">.</span>order_id<span class="token punctuation">)</span> <span class="token keyword">AS</span> successful_orders
+  <span class="token keyword">FROM</span>
+    pizza_runner<span class="token punctuation">.</span>customer_orders
+    <span class="token keyword">LEFT</span> <span class="token keyword">JOIN</span> pizza_runner<span class="token punctuation">.</span>runner_orders <span class="token keyword">ON</span> customer_orders<span class="token punctuation">.</span>order_id <span class="token operator">=</span> runner_orders<span class="token punctuation">.</span>order_id
+  <span class="token keyword">WHERE</span>
+    cancellation <span class="token operator">NOT</span> <span class="token operator">IN</span> <span class="token punctuation">(</span>
+      <span class="token string">'Restaurant Cancellation'</span><span class="token punctuation">,</span>
+      <span class="token string">'Customer Cancellation'</span>
+    <span class="token punctuation">)</span>
+    <span class="token operator">OR</span> cancellation <span class="token operator">IS</span> <span class="token boolean">NULL</span>
+  <span class="token keyword">GROUP</span> <span class="token keyword">BY</span>
     customer_id
-  ORDER BY
-    successful_orders DESC
-)
-SELECT
-  MAX(successful_orders)
-FROM
-  max_delivered_order;
+  <span class="token keyword">ORDER</span> <span class="token keyword">BY</span>
+    successful_orders <span class="token keyword">DESC</span>
+<span class="token punctuation">)</span>
+<span class="token keyword">SELECT</span>
+  <span class="token function">MAX</span><span class="token punctuation">(</span>successful_orders<span class="token punctuation">)</span>
+<span class="token keyword">FROM</span>
+  max_delivered_order<span class="token punctuation">;</span>
   
-8.  For each customer, how many delivered pizzas had at least 1 change and how many had no changes?
+<span class="token number">8</span><span class="token punctuation">.</span>  <span class="token keyword">For</span> each customer<span class="token punctuation">,</span> how many delivered pizzas had at least <span class="token number">1</span> change <span class="token operator">and</span> how many had <span class="token keyword">no</span> changes?
 
-WITH delivered_pizza AS (
-  SELECT
-    *
-  FROM
-    pizza_runner.customer_orders
-    LEFT JOIN pizza_runner.runner_orders ON customer_orders.order_id = runner_orders.order_id
-  WHERE
-    cancellation NOT IN (
-      'Restaurant Cancellation',
-      'Customer Cancellation'
-    )
-    OR cancellation IS NULL
-),
-updated_extras_and_exclusions AS(
-  SELECT
-    customer_id,
-    CASE
-      WHEN exclusions IN ('null', '') THEN NULL
-      ELSE exclusions
-    END AS updated_exclusions,
-    CASE
-      WHEN extras IN ('null', '') THEN NULL
-      ELSE extras
-    END AS updated_extras
-  FROM
+<span class="token keyword">WITH</span> delivered_pizza <span class="token keyword">AS</span> <span class="token punctuation">(</span>
+  <span class="token keyword">SELECT</span>
+    <span class="token operator">*</span>
+  <span class="token keyword">FROM</span>
+    pizza_runner<span class="token punctuation">.</span>customer_orders
+    <span class="token keyword">LEFT</span> <span class="token keyword">JOIN</span> pizza_runner<span class="token punctuation">.</span>runner_orders <span class="token keyword">ON</span> customer_orders<span class="token punctuation">.</span>order_id <span class="token operator">=</span> runner_orders<span class="token punctuation">.</span>order_id
+  <span class="token keyword">WHERE</span>
+    cancellation <span class="token operator">NOT</span> <span class="token operator">IN</span> <span class="token punctuation">(</span>
+      <span class="token string">'Restaurant Cancellation'</span><span class="token punctuation">,</span>
+      <span class="token string">'Customer Cancellation'</span>
+    <span class="token punctuation">)</span>
+    <span class="token operator">OR</span> cancellation <span class="token operator">IS</span> <span class="token boolean">NULL</span>
+<span class="token punctuation">)</span><span class="token punctuation">,</span>
+updated_extras_and_exclusions <span class="token keyword">AS</span><span class="token punctuation">(</span>
+  <span class="token keyword">SELECT</span>
+    customer_id<span class="token punctuation">,</span>
+    <span class="token keyword">CASE</span>
+      <span class="token keyword">WHEN</span> exclusions <span class="token operator">IN</span> <span class="token punctuation">(</span><span class="token string">'null'</span><span class="token punctuation">,</span> <span class="token string">''</span><span class="token punctuation">)</span> <span class="token keyword">THEN</span> <span class="token boolean">NULL</span>
+      <span class="token keyword">ELSE</span> exclusions
+    <span class="token keyword">END</span> <span class="token keyword">AS</span> updated_exclusions<span class="token punctuation">,</span>
+    <span class="token keyword">CASE</span>
+      <span class="token keyword">WHEN</span> extras <span class="token operator">IN</span> <span class="token punctuation">(</span><span class="token string">'null'</span><span class="token punctuation">,</span> <span class="token string">''</span><span class="token punctuation">)</span> <span class="token keyword">THEN</span> <span class="token boolean">NULL</span>
+      <span class="token keyword">ELSE</span> extras
+    <span class="token keyword">END</span> <span class="token keyword">AS</span> updated_extras
+  <span class="token keyword">FROM</span>
     delivered_pizza
-)
-SELECT
-  customer_id,
-  SUM(
-    CASE
-      WHEN updated_exclusions IS NOT NULL
-      OR updated_extras IS NOT NULL THEN 1
-      ELSE 0
-    END
-  ) AS at_least_1_change,
-  SUM(
-    CASE
-      WHEN updated_exclusions IS NULL
-      AND updated_extras IS NULL THEN 1
-      ELSE 0
-    END
-  ) AS no_changes
-FROM
+<span class="token punctuation">)</span>
+<span class="token keyword">SELECT</span>
+  customer_id<span class="token punctuation">,</span>
+  <span class="token function">SUM</span><span class="token punctuation">(</span>
+    <span class="token keyword">CASE</span>
+      <span class="token keyword">WHEN</span> updated_exclusions <span class="token operator">IS</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span>
+      <span class="token operator">OR</span> updated_extras <span class="token operator">IS</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">THEN</span> <span class="token number">1</span>
+      <span class="token keyword">ELSE</span> <span class="token number">0</span>
+    <span class="token keyword">END</span>
+  <span class="token punctuation">)</span> <span class="token keyword">AS</span> at_least_1_change<span class="token punctuation">,</span>
+  <span class="token function">SUM</span><span class="token punctuation">(</span>
+    <span class="token keyword">CASE</span>
+      <span class="token keyword">WHEN</span> updated_exclusions <span class="token operator">IS</span> <span class="token boolean">NULL</span>
+      <span class="token operator">AND</span> updated_extras <span class="token operator">IS</span> <span class="token boolean">NULL</span> <span class="token keyword">THEN</span> <span class="token number">1</span>
+      <span class="token keyword">ELSE</span> <span class="token number">0</span>
+    <span class="token keyword">END</span>
+  <span class="token punctuation">)</span> <span class="token keyword">AS</span> no_changes
+<span class="token keyword">FROM</span>
   updated_extras_and_exclusions
-GROUP BY
-  customer_id;
+<span class="token keyword">GROUP</span> <span class="token keyword">BY</span>
+  customer_id<span class="token punctuation">;</span>
 
-9.  How many pizzas were delivered that had both exclusions and extras?
+<span class="token number">9</span><span class="token punctuation">.</span>  How many pizzas were delivered that had both exclusions <span class="token operator">and</span> extras?
  
-WITH delivered_pizza AS (
-  SELECT  *  FROM
-    pizza_runner.customer_orders
-    LEFT JOIN pizza_runner.runner_orders ON customer_orders.order_id = runner_orders.order_id
-  WHERE
-    cancellation NOT IN (
-      'Restaurant Cancellation',
-      'Customer Cancellation'
-    )
-    OR cancellation IS NULL
-),
-updated_extras_and_exclusions AS(
-  SELECT
-    customer_id,
-    CASE
-      WHEN exclusions IN ('null', '') THEN NULL
-      ELSE exclusions
-    END AS updated_exclusions,
-    CASE
-      WHEN extras IN ('null', '') THEN NULL
-      ELSE extras
-    END AS updated_extras
-  FROM
+<span class="token keyword">WITH</span> delivered_pizza <span class="token keyword">AS</span> <span class="token punctuation">(</span>
+  <span class="token keyword">SELECT</span>  <span class="token operator">*</span>  <span class="token keyword">FROM</span>
+    pizza_runner<span class="token punctuation">.</span>customer_orders
+    <span class="token keyword">LEFT</span> <span class="token keyword">JOIN</span> pizza_runner<span class="token punctuation">.</span>runner_orders <span class="token keyword">ON</span> customer_orders<span class="token punctuation">.</span>order_id <span class="token operator">=</span> runner_orders<span class="token punctuation">.</span>order_id
+  <span class="token keyword">WHERE</span>
+    cancellation <span class="token operator">NOT</span> <span class="token operator">IN</span> <span class="token punctuation">(</span>
+      <span class="token string">'Restaurant Cancellation'</span><span class="token punctuation">,</span>
+      <span class="token string">'Customer Cancellation'</span>
+    <span class="token punctuation">)</span>
+    <span class="token operator">OR</span> cancellation <span class="token operator">IS</span> <span class="token boolean">NULL</span>
+<span class="token punctuation">)</span><span class="token punctuation">,</span>
+updated_extras_and_exclusions <span class="token keyword">AS</span><span class="token punctuation">(</span>
+  <span class="token keyword">SELECT</span>
+    customer_id<span class="token punctuation">,</span>
+    <span class="token keyword">CASE</span>
+      <span class="token keyword">WHEN</span> exclusions <span class="token operator">IN</span> <span class="token punctuation">(</span><span class="token string">'null'</span><span class="token punctuation">,</span> <span class="token string">''</span><span class="token punctuation">)</span> <span class="token keyword">THEN</span> <span class="token boolean">NULL</span>
+      <span class="token keyword">ELSE</span> exclusions
+    <span class="token keyword">END</span> <span class="token keyword">AS</span> updated_exclusions<span class="token punctuation">,</span>
+    <span class="token keyword">CASE</span>
+      <span class="token keyword">WHEN</span> extras <span class="token operator">IN</span> <span class="token punctuation">(</span><span class="token string">'null'</span><span class="token punctuation">,</span> <span class="token string">''</span><span class="token punctuation">)</span> <span class="token keyword">THEN</span> <span class="token boolean">NULL</span>
+      <span class="token keyword">ELSE</span> extras
+    <span class="token keyword">END</span> <span class="token keyword">AS</span> updated_extras
+  <span class="token keyword">FROM</span>
     delivered_pizza
-)
-SELECT
-  COUNT(*)
-FROM updated_extras_and_exclusions
-  WHERE updated_exclusions IS NULL OR updated_extras IS NOT NULL;
+<span class="token punctuation">)</span>
+<span class="token keyword">SELECT</span>
+  <span class="token function">COUNT</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span>
+<span class="token keyword">FROM</span> updated_extras_and_exclusions
+  <span class="token keyword">WHERE</span> updated_exclusions <span class="token operator">IS</span> <span class="token boolean">NULL</span> <span class="token operator">OR</span> updated_extras <span class="token operator">IS</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">;</span>
    
-10.  What was the total volume of pizzas ordered for each hour of the day?
-SELECT
-  DATE_PART('hour', order_time :: TIMESTAMP) as hour_of_the_day,
-  COUNT(pizza_id) as pizza_count
-FROM
-  pizza_runner.customer_orders
-GROUP BY
+<span class="token number">10</span><span class="token punctuation">.</span>  What was the total volume <span class="token keyword">of</span> pizzas ordered <span class="token keyword">for</span> each hour <span class="token keyword">of</span> the day?
+<span class="token keyword">SELECT</span>
+  DATE_PART<span class="token punctuation">(</span><span class="token string">'hour'</span><span class="token punctuation">,</span> order_time :: <span class="token keyword">TIMESTAMP</span><span class="token punctuation">)</span> <span class="token keyword">as</span> hour_of_the_day<span class="token punctuation">,</span>
+  <span class="token function">COUNT</span><span class="token punctuation">(</span>pizza_id<span class="token punctuation">)</span> <span class="token keyword">as</span> pizza_count
+<span class="token keyword">FROM</span>
+  pizza_runner<span class="token punctuation">.</span>customer_orders
+<span class="token keyword">GROUP</span> <span class="token keyword">BY</span>
   hour_of_the_day
-ORDER BY
-  hour_of_the_day;
+<span class="token keyword">ORDER</span> <span class="token keyword">BY</span>
+  hour_of_the_day<span class="token punctuation">;</span>
   
-11.  What was the volume of orders for each day of the week?
-SELECT
-  TO_CHAR(order_time :: TIMESTAMP,'DAY') as weekday,
-  COUNT(pizza_id) as pizza_count
-FROM
-  pizza_runner.customer_orders
-GROUP BY
+<span class="token number">11</span><span class="token punctuation">.</span>  What was the volume <span class="token keyword">of</span> orders <span class="token keyword">for</span> each day <span class="token keyword">of</span> the week?
+<span class="token keyword">SELECT</span>
+  TO_CHAR<span class="token punctuation">(</span>order_time :: <span class="token keyword">TIMESTAMP</span><span class="token punctuation">,</span><span class="token string">'DAY'</span><span class="token punctuation">)</span> <span class="token keyword">as</span> weekday<span class="token punctuation">,</span>
+  <span class="token function">COUNT</span><span class="token punctuation">(</span>pizza_id<span class="token punctuation">)</span> <span class="token keyword">as</span> pizza_count
+<span class="token keyword">FROM</span>
+  pizza_runner<span class="token punctuation">.</span>customer_orders
+<span class="token keyword">GROUP</span> <span class="token keyword">BY</span>
   weekday
-ORDER BY
- weekday;
+<span class="token keyword">ORDER</span> <span class="token keyword">BY</span>
+ weekday<span class="token punctuation">;</span>
 
 
 
-RUNNER AND CUSTOMER EXPERIENCE
-12.  How many runners signed up for each 1 week period? (i.e. week starts  `2021-01-01`)
+RUNNER <span class="token operator">AND</span> CUSTOMER EXPERIENCE
+<span class="token number">12</span><span class="token punctuation">.</span>  How many runners signed up <span class="token keyword">for</span> each <span class="token number">1</span> week period? <span class="token punctuation">(</span>i<span class="token number">.e</span><span class="token punctuation">.</span> week starts  <span class="token punctuation">`</span><span class="token number">2021</span><span class="token operator">-</span><span class="token number">01</span><span class="token operator">-</span><span class="token number">01</span><span class="token punctuation">`</span><span class="token punctuation">)</span>
 
-SELECT
-  DATE_TRUNC('week', registration_date) :: DATE + 3 AS registration_week,
-  COUNT(*) AS runner
-FROM
-  pizza_runner.runners
-GROUP BY
-  registration_week;
+<span class="token keyword">SELECT</span>
+  DATE_TRUNC<span class="token punctuation">(</span><span class="token string">'week'</span><span class="token punctuation">,</span> registration_date<span class="token punctuation">)</span> :: <span class="token keyword">DATE</span> <span class="token operator">+</span> <span class="token number">3</span> <span class="token keyword">AS</span> registration_week<span class="token punctuation">,</span>
+  <span class="token function">COUNT</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">AS</span> runner
+<span class="token keyword">FROM</span>
+  pizza_runner<span class="token punctuation">.</span>runners
+<span class="token keyword">GROUP</span> <span class="token keyword">BY</span>
+  registration_week<span class="token punctuation">;</span>
    
-13.  What was the average time in minutes it took for each runner to arrive at the Pizza Runner HQ to pickup the order?
+<span class="token number">13</span><span class="token punctuation">.</span>  What was the average time <span class="token operator">in</span> minutes it took <span class="token keyword">for</span> each runner <span class="token keyword">to</span> arrive at the Pizza Runner HQ <span class="token keyword">to</span> pickup the <span class="token keyword">order</span>?
 
-WITH cte AS(
-  SELECT
-    runner_id,
-    EXTRACT(
+<span class="token keyword">WITH</span> cte <span class="token keyword">AS</span><span class="token punctuation">(</span>
+  <span class="token keyword">SELECT</span>
+    runner_id<span class="token punctuation">,</span>
+    EXTRACT<span class="token punctuation">(</span>
       EPOCH
-      FROM
-        (CAST(pickup_time AS TIMESTAMP))
-    ) AS pickup_time,
-    EXTRACT(
+      <span class="token keyword">FROM</span>
+        <span class="token punctuation">(</span>CAST<span class="token punctuation">(</span>pickup_time <span class="token keyword">AS</span> <span class="token keyword">TIMESTAMP</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">)</span> <span class="token keyword">AS</span> pickup_time<span class="token punctuation">,</span>
+    EXTRACT<span class="token punctuation">(</span>
       EPOCH
-      FROM
-        (CAST(order_time AS TIMESTAMP))
-    ) AS order_time
-  FROM
-    pizza_runner.runner_orders
-    INNER JOIN pizza_runner.customer_orders ON runner_orders.order_id = customer_orders.order_id
-  WHERE
-    pickup_time != 'null'
-)
-SELECT
-  runner_id,
-  AVG((pickup_time - order_time) / 60) AS avg_pickup_time
-FROM
+      <span class="token keyword">FROM</span>
+        <span class="token punctuation">(</span>CAST<span class="token punctuation">(</span>order_time <span class="token keyword">AS</span> <span class="token keyword">TIMESTAMP</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">)</span> <span class="token keyword">AS</span> order_time
+  <span class="token keyword">FROM</span>
+    pizza_runner<span class="token punctuation">.</span>runner_orders
+    <span class="token keyword">INNER</span> <span class="token keyword">JOIN</span> pizza_runner<span class="token punctuation">.</span>customer_orders <span class="token keyword">ON</span> runner_orders<span class="token punctuation">.</span>order_id <span class="token operator">=</span> customer_orders<span class="token punctuation">.</span>order_id
+  <span class="token keyword">WHERE</span>
+    pickup_time <span class="token operator">!=</span> <span class="token string">'null'</span>
+<span class="token punctuation">)</span>
+<span class="token keyword">SELECT</span>
+  runner_id<span class="token punctuation">,</span>
+  <span class="token function">AVG</span><span class="token punctuation">(</span><span class="token punctuation">(</span>pickup_time <span class="token operator">-</span> order_time<span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token number">60</span><span class="token punctuation">)</span> <span class="token keyword">AS</span> avg_pickup_time
+<span class="token keyword">FROM</span>
   cte
-GROUP BY
-  runner_id;
+<span class="token keyword">GROUP</span> <span class="token keyword">BY</span>
+  runner_id<span class="token punctuation">;</span>
   
-14.  Is there any relationship between the number of pizzas and how long the order takes to prepare?
+<span class="token number">14</span><span class="token punctuation">.</span>  <span class="token operator">Is</span> there <span class="token keyword">any</span> relationship <span class="token operator">between</span> the number <span class="token keyword">of</span> pizzas <span class="token operator">and</span> how long the <span class="token keyword">order</span> takes <span class="token keyword">to</span> prepare?
 
-SELECT
-  DISTINCT t1.order_id,
-  DATE_PART(
-    'minute',
-    AGE(t1.pickup_time :: TIMESTAMP, t2.order_time)
-  ) :: INTEGER AS pickup_minutes,
-  COUNT(t2.order_id) AS pizza_count
-FROM
-  pizza_runner.runner_orders AS t1
-  INNER JOIN pizza_runner.customer_orders AS t2 ON t1.order_id = t2.order_id
-WHERE
-  t1.pickup_time != 'null'
-GROUP BY
-  t1.order_id,
+<span class="token keyword">SELECT</span>
+  <span class="token keyword">DISTINCT</span> t1<span class="token punctuation">.</span>order_id<span class="token punctuation">,</span>
+  DATE_PART<span class="token punctuation">(</span>
+    <span class="token string">'minute'</span><span class="token punctuation">,</span>
+    AGE<span class="token punctuation">(</span>t1<span class="token punctuation">.</span>pickup_time :: <span class="token keyword">TIMESTAMP</span><span class="token punctuation">,</span> t2<span class="token punctuation">.</span>order_time<span class="token punctuation">)</span>
+  <span class="token punctuation">)</span> :: <span class="token keyword">INTEGER</span> <span class="token keyword">AS</span> pickup_minutes<span class="token punctuation">,</span>
+  <span class="token function">COUNT</span><span class="token punctuation">(</span>t2<span class="token punctuation">.</span>order_id<span class="token punctuation">)</span> <span class="token keyword">AS</span> pizza_count
+<span class="token keyword">FROM</span>
+  pizza_runner<span class="token punctuation">.</span>runner_orders <span class="token keyword">AS</span> t1
+  <span class="token keyword">INNER</span> <span class="token keyword">JOIN</span> pizza_runner<span class="token punctuation">.</span>customer_orders <span class="token keyword">AS</span> t2 <span class="token keyword">ON</span> t1<span class="token punctuation">.</span>order_id <span class="token operator">=</span> t2<span class="token punctuation">.</span>order_id
+<span class="token keyword">WHERE</span>
+  t1<span class="token punctuation">.</span>pickup_time <span class="token operator">!=</span> <span class="token string">'null'</span>
+<span class="token keyword">GROUP</span> <span class="token keyword">BY</span>
+  t1<span class="token punctuation">.</span>order_id<span class="token punctuation">,</span>
   pickup_minutes
-ORDER BY
-  pizza_count;
+<span class="token keyword">ORDER</span> <span class="token keyword">BY</span>
+  pizza_count<span class="token punctuation">;</span>
 
 
-15.  What was the average distance travelled for each customer? 
+<span class="token number">15</span><span class="token punctuation">.</span>  What was the average distance travelled <span class="token keyword">for</span> each customer? 
 
-WITH order_distances AS (
-SELECT DISTINCT
-  t1.customer_id,
-  t1.order_id,
-  UNNEST(REGEXP_MATCH(t2.distance, '(^[0-9,.]+)'))::NUMERIC AS distance
-FROM pizza_runner.customer_orders AS t1
-INNER JOIN pizza_runner.runner_orders AS t2
-  ON t1.order_id = t2.order_id
-WHERE t2.pickup_time != 'null'
-)
-SELECT
-  customer_id,
-  ROUND(AVG(distance), 1) AS avg_distance
-FROM order_distances
-GROUP BY customer_id
-ORDER BY customer_id;
+<span class="token keyword">WITH</span> order_distances <span class="token keyword">AS</span> <span class="token punctuation">(</span>
+<span class="token keyword">SELECT</span> <span class="token keyword">DISTINCT</span>
+  t1<span class="token punctuation">.</span>customer_id<span class="token punctuation">,</span>
+  t1<span class="token punctuation">.</span>order_id<span class="token punctuation">,</span>
+  UNNEST<span class="token punctuation">(</span>REGEXP_MATCH<span class="token punctuation">(</span>t2<span class="token punctuation">.</span>distance<span class="token punctuation">,</span> <span class="token string">'(^[0-9,.]+)'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>::<span class="token keyword">NUMERIC</span> <span class="token keyword">AS</span> distance
+<span class="token keyword">FROM</span> pizza_runner<span class="token punctuation">.</span>customer_orders <span class="token keyword">AS</span> t1
+<span class="token keyword">INNER</span> <span class="token keyword">JOIN</span> pizza_runner<span class="token punctuation">.</span>runner_orders <span class="token keyword">AS</span> t2
+  <span class="token keyword">ON</span> t1<span class="token punctuation">.</span>order_id <span class="token operator">=</span> t2<span class="token punctuation">.</span>order_id
+<span class="token keyword">WHERE</span> t2<span class="token punctuation">.</span>pickup_time <span class="token operator">!=</span> <span class="token string">'null'</span>
+<span class="token punctuation">)</span>
+<span class="token keyword">SELECT</span>
+  customer_id<span class="token punctuation">,</span>
+  <span class="token function">ROUND</span><span class="token punctuation">(</span><span class="token function">AVG</span><span class="token punctuation">(</span>distance<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token keyword">AS</span> avg_distance
+<span class="token keyword">FROM</span> order_distances
+<span class="token keyword">GROUP</span> <span class="token keyword">BY</span> customer_id
+<span class="token keyword">ORDER</span> <span class="token keyword">BY</span> customer_id<span class="token punctuation">;</span>
 
 
-16.  What was the difference between the longest and shortest delivery times for all orders?
+<span class="token number">16</span><span class="token punctuation">.</span>  What was the difference <span class="token operator">between</span> the longest <span class="token operator">and</span> shortest delivery times <span class="token keyword">for</span> <span class="token keyword">all</span> orders?
 
-WITH delivery_duration AS (
-  SELECT
-    UNNEST(REGEXP_MATCH(duration, '(^[0-9]+)')) :: NUMERIC AS duration
-  FROM
-    pizza_runner.runner_orders
-  WHERE
-    duration != 'null'
-)
-SELECT
-  MAX(duration) - MIN(duration) AS delivery_distance
-FROM
+<span class="token keyword">WITH</span> delivery_duration <span class="token keyword">AS</span> <span class="token punctuation">(</span>
+  <span class="token keyword">SELECT</span>
+    UNNEST<span class="token punctuation">(</span>REGEXP_MATCH<span class="token punctuation">(</span>duration<span class="token punctuation">,</span> <span class="token string">'(^[0-9]+)'</span><span class="token punctuation">)</span><span class="token punctuation">)</span> :: <span class="token keyword">NUMERIC</span> <span class="token keyword">AS</span> duration
+  <span class="token keyword">FROM</span>
+    pizza_runner<span class="token punctuation">.</span>runner_orders
+  <span class="token keyword">WHERE</span>
+    duration <span class="token operator">!=</span> <span class="token string">'null'</span>
+<span class="token punctuation">)</span>
+<span class="token keyword">SELECT</span>
+  <span class="token function">MAX</span><span class="token punctuation">(</span>duration<span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token function">MIN</span><span class="token punctuation">(</span>duration<span class="token punctuation">)</span> <span class="token keyword">AS</span> delivery_distance
+<span class="token keyword">FROM</span>
   delivery_duration
   
-17.  What was the average speed for each runner for each delivery and do you notice any trend for these values?
+<span class="token number">17</span><span class="token punctuation">.</span>  What was the average speed <span class="token keyword">for</span> each runner <span class="token keyword">for</span> each delivery <span class="token operator">and</span> <span class="token keyword">do</span> you notice <span class="token keyword">any</span> trend <span class="token keyword">for</span> these <span class="token keyword">values</span>?
 
- WITH avg_delivery_duration AS (
-  SELECT
-    DISTINCT t2.runner_id,
-    t2.order_id,
-    UNNEST(REGEXP_MATCH(duration, '(^[0-9]+)')) :: NUMERIC AS duration,
-    UNNEST(REGEXP_MATCH(t2.distance, '(^[0-9,.]+)')) :: NUMERIC AS distance
-  FROM
-    pizza_runner.customer_orders AS t1
-    INNER JOIN pizza_runner.runner_orders AS t2 ON t1.order_id = t2.order_id
-  WHERE
-    cancellation NOT IN (
-      'Restaurant Cancellation',
-      'Customer Cancellation'
-    )
-    OR cancellation IS NULL
-)
-SELECT
-  runner_id,
-  order_id,
-  duration,
-  distance,
-  ROUND(distance / (duration/60),1) AS avg_speed
-FROM
+ <span class="token keyword">WITH</span> avg_delivery_duration <span class="token keyword">AS</span> <span class="token punctuation">(</span>
+  <span class="token keyword">SELECT</span>
+    <span class="token keyword">DISTINCT</span> t2<span class="token punctuation">.</span>runner_id<span class="token punctuation">,</span>
+    t2<span class="token punctuation">.</span>order_id<span class="token punctuation">,</span>
+    UNNEST<span class="token punctuation">(</span>REGEXP_MATCH<span class="token punctuation">(</span>duration<span class="token punctuation">,</span> <span class="token string">'(^[0-9]+)'</span><span class="token punctuation">)</span><span class="token punctuation">)</span> :: <span class="token keyword">NUMERIC</span> <span class="token keyword">AS</span> duration<span class="token punctuation">,</span>
+    UNNEST<span class="token punctuation">(</span>REGEXP_MATCH<span class="token punctuation">(</span>t2<span class="token punctuation">.</span>distance<span class="token punctuation">,</span> <span class="token string">'(^[0-9,.]+)'</span><span class="token punctuation">)</span><span class="token punctuation">)</span> :: <span class="token keyword">NUMERIC</span> <span class="token keyword">AS</span> distance
+  <span class="token keyword">FROM</span>
+    pizza_runner<span class="token punctuation">.</span>customer_orders <span class="token keyword">AS</span> t1
+    <span class="token keyword">INNER</span> <span class="token keyword">JOIN</span> pizza_runner<span class="token punctuation">.</span>runner_orders <span class="token keyword">AS</span> t2 <span class="token keyword">ON</span> t1<span class="token punctuation">.</span>order_id <span class="token operator">=</span> t2<span class="token punctuation">.</span>order_id
+  <span class="token keyword">WHERE</span>
+    cancellation <span class="token operator">NOT</span> <span class="token operator">IN</span> <span class="token punctuation">(</span>
+      <span class="token string">'Restaurant Cancellation'</span><span class="token punctuation">,</span>
+      <span class="token string">'Customer Cancellation'</span>
+    <span class="token punctuation">)</span>
+    <span class="token operator">OR</span> cancellation <span class="token operator">IS</span> <span class="token boolean">NULL</span>
+<span class="token punctuation">)</span>
+<span class="token keyword">SELECT</span>
+  runner_id<span class="token punctuation">,</span>
+  order_id<span class="token punctuation">,</span>
+  duration<span class="token punctuation">,</span>
+  distance<span class="token punctuation">,</span>
+  <span class="token function">ROUND</span><span class="token punctuation">(</span>distance <span class="token operator">/</span> <span class="token punctuation">(</span>duration<span class="token operator">/</span><span class="token number">60</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token keyword">AS</span> avg_speed
+<span class="token keyword">FROM</span>
   avg_delivery_duration
-GROUP BY
-  runner_id,
-  order_id,
-  duration,
+<span class="token keyword">GROUP</span> <span class="token keyword">BY</span>
+  runner_id<span class="token punctuation">,</span>
+  order_id<span class="token punctuation">,</span>
+  duration<span class="token punctuation">,</span>
   distance
-ORDER BY
+<span class="token keyword">ORDER</span> <span class="token keyword">BY</span>
   runner_id
 
-18.  What is the successful delivery percentage for each runner?
-SELECT 
-  runner_id,
-  ROUND(
-    100 * SUM(
-      CASE
-        WHEN
-  cancellation NOT IN (
-    'Restaurant Cancellation',
-    'Customer Cancellation'
-  ) OR cancellation IS NULL THEN 1
-        ELSE 0 END
-      ) / COUNT(*)
-    ) AS successful_delivery_percentage
-    FROM
-      pizza_runner.runner_orders
-    GROUP BY
-      runner_id;
+<span class="token number">18</span><span class="token punctuation">.</span>  What <span class="token operator">is</span> the successful delivery percentage <span class="token keyword">for</span> each runner?
+<span class="token keyword">SELECT</span> 
+  runner_id<span class="token punctuation">,</span>
+  <span class="token function">ROUND</span><span class="token punctuation">(</span>
+    <span class="token number">100</span> <span class="token operator">*</span> <span class="token function">SUM</span><span class="token punctuation">(</span>
+      <span class="token keyword">CASE</span>
+        <span class="token keyword">WHEN</span>
+  cancellation <span class="token operator">NOT</span> <span class="token operator">IN</span> <span class="token punctuation">(</span>
+    <span class="token string">'Restaurant Cancellation'</span><span class="token punctuation">,</span>
+    <span class="token string">'Customer Cancellation'</span>
+  <span class="token punctuation">)</span> <span class="token operator">OR</span> cancellation <span class="token operator">IS</span> <span class="token boolean">NULL</span> <span class="token keyword">THEN</span> <span class="token number">1</span>
+        <span class="token keyword">ELSE</span> <span class="token number">0</span> <span class="token keyword">END</span>
+      <span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token function">COUNT</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span>
+    <span class="token punctuation">)</span> <span class="token keyword">AS</span> successful_delivery_percentage
+    <span class="token keyword">FROM</span>
+      pizza_runner<span class="token punctuation">.</span>runner_orders
+    <span class="token keyword">GROUP</span> <span class="token keyword">BY</span>
+      runner_id<span class="token punctuation">;</span>
+
+</code></pre>
+</div>
+</body>
+
+</html>
