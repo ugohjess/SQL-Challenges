@@ -1,0 +1,314 @@
+/*
+Define a partial replication of the playlist table with the following fields:
+rank - the position of the song from highest played to least played - int, primary key
+artist_name - name of the artist - text, mandatory
+song_title- name of the song - text, mandatory
+rating - personal rating - int, mandatory
+gender - gender of the artist
+genre -  song category -text, mandatory
+sondtrack - used in a movie- text -mandatory
+*/
+
+
+CREATE  TABLE songs ( 
+ranks INT PRIMARY KEY  NOT NULL, 
+artist_name VARCHAR(50) NOT NULL,
+song_title VARCHAR(50) NOT NULL,
+rating INT , 
+gender VARCHAR(5),
+genre VARCHAR(20) NOT NULL,
+soundtrack VARCHAR (5) NOT NULL
+);
+
+
+
+INSERT INTO
+  songs(
+    ranks,
+    artist_name,
+    song_title,
+    rating,
+    gender,
+    genre,
+    soundtrack
+  )
+VALUES
+  (1,'Aurora','Heathens',4.8,'F', 'Indie Pop', 'N'),
+  (2, 'Doyoung','Like a star',4.8,'M','k-pop','Y'),
+  (3, 'Savage','rosemary',4.8,'M','Afrobeats','N' ),
+  (4,'Chanyeol','Stay with me',4.8,'M','k-pop', 'Y'),
+  (5,'Kate bush','running up that hill',4.8,'F','Pop','Y'),
+  (6, 'Qing Feng', 'storm',4.8,'M',Mandopop','N'),
+  (7,'Chrisbrown','under the influence', 4.8,'M','R&B/soul','N'),
+  ( 8,'Lasmid', 'Atele',4.8,'M','Afrobeats','N'),
+  (9,'Yours',' Raiden ',4.8,' M ',' K - pop ',' N'),
+  (10,' Gotye ',' somebody that i used to know ',4.8,' M ',' alt ',' N'),
+  (11,' one republic ',' someday ',4.8,' M ',' Pop ',' N'),
+  (12,' Aurora ','cure for me',4.8,' F ',' Indie pop ',' N'),
+  (13,' Nelly furtado ',' say it right ',4.8,' F ',' Pop ',' N'),
+  (14,' Talyor swift ',' long story short ',4.8,' F ',' Alternative ',' N'),
+  (15,' Taylor swift ',' dancing with our hands tied ',4.8,' F ',' Pop ',' N'),
+  (16,' Aespa ',' black mamba ',4.8,' F ',' K - pop ',' N'),
+  (17,' young John ',' dada ',4.8,' M ',' Afro pop ',' N'),
+  (18, ' Tems ', ' try me ', 4.8, ' F ', ' Alt ', ' N'),
+  (19,' Burna boy ',' its plenty ',4.8,' M ',' Afro pop ',
+    ' N'
+  ),
+  (20, ' 5SOS ', ' youngblood ', 4.8, ' M ', ' Pop ', ' N'),
+  (
+    21,
+    ' Post malone ',
+    ' one right now ',
+    4.8,
+    ' M ',
+    ' Hip hop / rap ',
+    ' N'
+  ),
+  (22, ' Tate McRae ', ' uh oh ', 4.8, ' F ', ' Pop ', ' N'),
+  (
+    23,
+    ' Asake ',
+    ' Terminator ',
+    4.8,
+    ' M ',
+    ' African ',
+    ' N'
+  ),
+  (
+    24,
+    ' Justin bieber ',
+    ' Deserve you ',
+    4.8,
+    ' F ',
+    ' Pop ',
+    ' N'
+  ),
+  (
+    25,
+    ' Taylor Swift ',
+    ' call it what you want ',
+    4.8,
+    ' F ',
+    ' Pop ',
+    ' N'
+  ),
+  (
+    26,
+    ' One republic ',
+    ' Sunshine ',
+    4.8,
+    ' M ',
+    ' Pop ',
+    ' N'
+  ),
+  (
+    27,
+    ' Lil Nas X ',
+    ' Industrybaby ',4.8,
+    ' M ',
+    ' Hiphop / Rap ' ,' N'
+  ),
+  (
+    28,
+    ' The kid LAROI ',' stay ',
+    4.8,
+    ' M ' ,' Pop ',
+    ' N'
+  ),
+  (
+    29,
+    ' Taylor swift ',
+    ' bejeweled ',
+    4.8,
+    ' F ',
+    ' Pop ',
+    ' N'
+  ),
+  (
+    30,
+    ' Big red machine ',
+    ' Renegade ',
+    4.8,
+    ' M ',
+    ' Alt ',
+    ' N'
+  ),
+  (
+    31,
+    ' Cardi B ',
+    ' WAP ',4.8,
+    ' F ',
+    ' Hip hop / rap ',
+    ' N'
+  ),
+  (
+    32,
+    ' Aurora ',
+    ' temporary high ',
+    4.8,
+    ' F ',
+    ' Indie pop ',
+    ' N'
+  ),
+  (
+    33,
+    ' Blackpink ',
+    ' shut down ',
+    4.8,
+    ' F ',
+    ' k - pop ',
+    ' N'
+  ),
+  (
+    34,
+    ' Adele ',
+    ' love in the dark ',
+    4.8,
+    ' F ',
+    ' Pop ',
+    ' N'
+  ),
+  (
+    35,
+    ' Witt Lowry ',
+    ' into your arms ',
+    4.8,
+    ' M ',
+    ' Pop ',
+    ' N'
+  ),
+  (
+    36,
+    ' Taylor swift ',
+    ' maroon ',
+    4.8,
+    ' F ',
+    ' Pop ',
+    ' N'
+  ),
+  (
+    37,
+    ' Wendy ',
+    ' what if love ',
+    4.8,
+    ' F ',
+    ' K - pop ',
+    ' Y '
+  ),
+  (
+    38,
+    ' Pink ',
+    ' what about us ',
+    4.8,
+    ' F ',
+    ' Pop ',
+    ' N'
+  ),
+  (
+    39,
+    ' Tove lo ',
+    ' Equally lost ',
+    4.8,
+    ' F ',
+    ' Altenative ',
+    ' N'
+  ),
+  (
+    40,
+    ' Lil Nas X ',
+    ' That is what I want ',
+    4.8,
+    ' F ',
+    ' Pop ',
+    ' N'
+  ),
+  (
+    41,
+    ' Shownu ',
+    ' I will be There ',
+    4.8,
+    ' F ',
+    ' K - pop ',
+    ' Y '
+  ),
+  (
+    42,
+    ' Maroon 5 ',
+    ' Lost ',
+    4.8,
+    ' F ',
+    ' Pop ',
+    ' N'
+  ),
+  (
+    43,
+    ' Blackpink ',
+    ' Playing with fire ',
+    4.8,
+    ' F ',
+    ' K - pop ',
+    ' N'
+  ),
+  (
+    44,
+    ' Rihanna ',
+    ' Umbrella ',
+    4.8,
+    ' F ',
+    ' Pop ',
+    ' N'
+  ),
+  (
+    45,
+    ' Blackpink ',
+    ' Kill this love ',
+    4.8,
+    ' F ',
+    ' K - pop ',
+    ' N'
+  ),
+  (
+    46,
+    ' Maroon 5 ',
+    ' Do not wanna know ',
+    4.8,
+    ' M ',
+    ' Pop ',
+    ' N'
+  ),
+  (
+    47,
+    ' Kim Jong Wan',
+    ' Gravity ',
+    4.8,
+    ' F ',
+    ' K - pop ',
+    ' Y '
+  ),
+  (
+    48,
+    ' Taylor Swift ',
+    ' Mastermind ',
+    4.8,
+    ' F ',
+    ' Pop ',
+    ' N'
+  ),
+  (
+    49,
+    ' Taylor swift ',
+    ' You are on your own kid ',
+    4.8,
+    ' F ',
+    ' Pop ',
+    ' N'
+  ),
+  (
+    50,
+    ' Taylor swift ',
+    ' Snow on the beach ',
+    4.8,
+    ' F ',
+    ' Pop ',
+    ' N'
+  );
