@@ -10,6 +10,10 @@ sondtrack - used in a movie- text -mandatory
 */
 
 
+#------------------------------------#
+TABLE CREATION AND INSERTING OF VALUES
+#------------------------------------#
+
 CREATE  TABLE songs ( 
 ranks INT PRIMARY KEY  NOT NULL, 
 artist_name VARCHAR(50) NOT NULL,
@@ -19,7 +23,6 @@ gender VARCHAR(5),
 genre VARCHAR(20) NOT NULL,
 soundtrack VARCHAR (5) NOT NULL
 );
-
 
 
 INSERT INTO
@@ -83,3 +86,27 @@ VALUES
   (48,' Taylor Swift ',' Mastermind ',4.8,' F ',' Pop ',' N'),
   (49,' Taylor swift ',' You are on your own kid ',4.8,' F ',' Pop ',' N'),
   (50,' Taylor swift ',' Snow on the beach ',4.8,' F ',' Pop ',' N');
+  
+  
+#----------------------------#
+DATA CLEANING AND PREPARATION
+#----------------------------#
+
+# correcting wrong artist name
+
+UPDATE song 
+SET artist_name = 'Chris Brown'
+WHERE artist_name = 'Chrisbrown'
+
+
+
+
+
+
+
+
+  
+#-------------#
+DATA ANALYSIS
+#-------------#
+
