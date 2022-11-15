@@ -186,3 +186,42 @@ GROUP BY
 gender
 ORDER BY
   counts DESC
+  
+  WITH cte AS(
+  SELECT
+    genre,
+    CASE
+      WHEN soundtrack IN (' Y ', 'Y') THEN 1
+      ELSE 0
+    END AS soundtrack_flag
+  FROM
+    songs
+)
+SELECT
+  genre,
+  SUM(soundtrack_flag) AS frequency
+FROM
+  cte
+GROUP BY
+  genre
+ORDER BY
+  frequency DESC;
+  
+WITH cte AS(
+  SELECT
+    CASE
+      WHEN genre IN (' African ', ' Afro pop ', 'Afrobeats') THEN 'African'
+      ELSE 'Foreign'
+    END AS genre_flag
+  FROM
+    songs
+)
+SELECT
+  genre_flag,
+  COUNT(genre_flag) AS frequency
+FROM
+  cte
+GROUP BY
+  genre_flag
+ORDER BY
+  frequency DESC;
