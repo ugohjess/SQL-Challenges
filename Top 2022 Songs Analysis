@@ -177,3 +177,12 @@ GROUP BY
 ORDER BY
   counts DESC
   
+SELECT
+ gender,
+  COUNT(*) AS counts
+FROM
+  songs
+GROUP BY
+gender
+ORDER BY
+  counts DESC
