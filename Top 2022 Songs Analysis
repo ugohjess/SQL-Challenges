@@ -99,6 +99,18 @@ SET artist_name = 'Chris Brown'
 WHERE artist_name = 'Chrisbrown'
 
 
+UPDATE songs
+SET artist_name = 'Taylor Swift'
+WHERE ranks IN (14,15,25,29,36,48,49,50)
+
+UPDATE songs
+SET artist_name = 'Raiden'
+WHERE ranks = 9
+
+UPDATE songs
+SET song_title = 'Yours'
+WHERE ranks = 9
+
 
 
 
