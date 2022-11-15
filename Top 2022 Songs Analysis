@@ -92,7 +92,7 @@ VALUES
 DATA CLEANING AND PREPARATION
 #----------------------------#
 
-# correcting of mismatched values
+/*correcting of mismatched values*/
 
 UPDATE songs 
 SET artist_name = 'Chris Brown'
@@ -119,6 +119,14 @@ SET genre = 'Korean Pop'
 WHERE genre IN (' k - pop ',' K - pop ', 'K - pop')
 
 UPDATE songs
+SET genre = 'Indie Pop'
+WHERE genre IN (' Indie pop ',' Indie Pop ')
+
+UPDATE songs
+SET genre = 'Pop'
+WHERE genre IN (' Pop ','Pop ')
+
+UPDATE songs
 SET gender= 'M'
 WHERE ranks = 47
   
@@ -126,3 +134,18 @@ WHERE ranks = 47
 DATA ANALYSIS
 #-------------#
 
+SELECT
+  COUNT(*) AS counts
+FROM
+  songs
+
+/*artist count by occurence */
+SELECT
+  artist_name,
+  COUNT(*) AS counts
+FROM
+  songs
+GROUP BY
+  artist_name
+ORDER BY
+  counts DESC
