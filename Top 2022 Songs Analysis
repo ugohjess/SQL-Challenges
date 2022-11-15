@@ -111,10 +111,6 @@ SET song_title = 'Yours'
 WHERE ranks = 9
 
 UPDATE songs
-SET genre = 'Alternative'
-WHERE genre IN (' alt ',' Alt ',' Altenative ')
-
-UPDATE songs
 SET genre = 'Korean Pop'
 WHERE genre IN (' k - pop ',' K - pop ', 'K - pop')
 
@@ -129,11 +125,30 @@ WHERE genre IN (' Pop ','Pop ')
 UPDATE songs
 SET gender= 'M'
 WHERE ranks = 47
+
+UPDATE songs
+SET genre = 'Alternate'
+WHERE genre IN (' alt ',' Alt ',' Altenative ','Alternative',' Alternative ')
+
+UPDATE songs
+SET genre = 'Hiphop/Rap'
+WHERE genre IN (' Hip hop / rap ', ' Hiphop / Rap ')
+
+UPDATE songs
+SET gender = 'M'
+WHERE gender IN (' M ', 'M')
+
+UPDATE songs
+SET gender = 'F'
+WHERE gender IN (' F ', 'F')
+
+
   
 #-------------#
 DATA ANALYSIS
 #-------------#
 
+/*artist count by occurence */
 SELECT
   COUNT(*) AS counts
 FROM
@@ -149,3 +164,16 @@ GROUP BY
   artist_name
 ORDER BY
   counts DESC
+  
+  
+/*artist count by occurence */
+  SELECT
+ genre,
+  COUNT(*) AS counts
+FROM
+  songs
+GROUP BY
+ genre
+ORDER BY
+  counts DESC
+  
