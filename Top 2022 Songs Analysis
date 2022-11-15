@@ -92,12 +92,11 @@ VALUES
 DATA CLEANING AND PREPARATION
 #----------------------------#
 
-# correcting wrong artist name
+# correcting of mismatched values
 
-UPDATE song 
+UPDATE songs 
 SET artist_name = 'Chris Brown'
 WHERE artist_name = 'Chrisbrown'
-
 
 UPDATE songs
 SET artist_name = 'Taylor Swift'
@@ -111,12 +110,17 @@ UPDATE songs
 SET song_title = 'Yours'
 WHERE ranks = 9
 
+UPDATE songs
+SET genre = 'Alternative'
+WHERE genre IN (' alt ',' Alt ',' Altenative ')
 
+UPDATE songs
+SET genre = 'Korean Pop'
+WHERE genre IN (' k - pop ',' K - pop ', 'K - pop')
 
-
-
-
-
+UPDATE songs
+SET gender= 'M'
+WHERE ranks = 47
   
 #-------------#
 DATA ANALYSIS
