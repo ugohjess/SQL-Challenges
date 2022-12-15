@@ -166,7 +166,7 @@ ORDER BY
   counts DESC
   
   
-/*artist count by occurence */
+/*song count by genre */
   SELECT
  genre,
   COUNT(*) AS counts
@@ -176,7 +176,8 @@ GROUP BY
  genre
 ORDER BY
   counts DESC
-  
+
+/*artist count by gender */
 SELECT
  gender,
   COUNT(*) AS counts
@@ -187,6 +188,8 @@ gender
 ORDER BY
   counts DESC
   
+  
+/*how many songs were OSTs */
   WITH cte AS(
   SELECT
     genre,
@@ -207,6 +210,8 @@ GROUP BY
 ORDER BY
   frequency DESC;
   
+
+ /*how many songs were foreign or local */
 WITH cte AS(
   SELECT
     CASE
